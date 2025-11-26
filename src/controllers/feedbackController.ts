@@ -31,27 +31,43 @@ export class FeedbackController {
   }
 
   /**
+   * Get a single feedback by ID
+   */
+  async getFeedbackById(id: string): Promise<Feedback | null> {
+    const feedbackData = await feedbackRepository.findById(id)
+
+    if (!feedbackData) {
+      return null
+    }
+
+    logger.info('Feedback retrieved', { id })
+
+    // Map to response format
+    return toFeedbackResponse(feedbackData)
+  }
+
+  /**
    * List feedback with filters and pagination
    */
   async listFeedback(query: ListFeedbackQuery): Promise<PaginatedFeedbackResponse> {
-    const { page, limit, priority, sentiment } = query
+    const { page, pageSize, priority, sentiment, tag } = query
 
     // Calculate pagination offset
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * pageSize
 
     // Build filters
-    const filters = { priority, sentiment }
+    const filters = { priority, sentiment, tag }
 
     // Execute queries in parallel
     const [data, total] = await Promise.all([
-      feedbackRepository.findMany(filters, skip, limit),
+      feedbackRepository.findMany(filters, skip, pageSize),
       feedbackRepository.count(filters),
     ])
 
-    logger.info('Feedback list fetched', { page, limit, total })
+    logger.info('Feedback list fetched', { page, pageSize, total })
 
     // Map to response format
-    return toPaginatedResponse(data, page, limit, total)
+    return toPaginatedResponse(data, page, pageSize, total)
   }
 }
 
