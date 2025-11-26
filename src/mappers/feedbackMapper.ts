@@ -24,16 +24,16 @@ export function toFeedbackResponse(prismaFeedback: PrismaFeedback): Feedback {
 export function toPaginatedResponse(
   data: PrismaFeedback[],
   page: number,
-  limit: number,
+  pageSize: number,
   total: number
 ): PaginatedFeedbackResponse {
   return {
     data: data.map(toFeedbackResponse),
     pagination: {
       page,
-      limit,
+      pageSize,
       total,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / pageSize),
     },
   }
 }

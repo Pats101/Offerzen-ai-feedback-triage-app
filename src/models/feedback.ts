@@ -33,7 +33,7 @@ export interface PaginatedFeedbackResponse {
   data: Feedback[]
   pagination: {
     page: number
-    limit: number
+    pageSize: number
     total: number
     totalPages: number
   }
