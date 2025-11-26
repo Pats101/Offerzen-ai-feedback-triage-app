@@ -17,6 +17,7 @@ export interface CreateFeedbackData {
 export interface FeedbackFilters {
   priority?: 'P0' | 'P1' | 'P2' | 'P3'
   sentiment?: 'positive' | 'neutral' | 'negative'
+  tag?: string
 }
 
 /**
@@ -42,6 +43,15 @@ export class FeedbackRepository {
   }
 
   /**
+   * Find a single feedback entry by ID
+   */
+  async findById(id: string): Promise<PrismaFeedback | null> {
+    return prisma.feedback.findUnique({
+      where: { id },
+    })
+  }
+
+  /**
    * Find feedback entries with filters and pagination
    */
   async findMany(
@@ -52,6 +62,7 @@ export class FeedbackRepository {
     const where: any = {}
     if (filters.priority) where.priority = filters.priority
     if (filters.sentiment) where.sentiment = filters.sentiment
+    if (filters.tag) where.tags = { has: filters.tag }
 
     return prisma.feedback.findMany({
       where,
@@ -68,6 +79,7 @@ export class FeedbackRepository {
     const where: any = {}
     if (filters.priority) where.priority = filters.priority
     if (filters.sentiment) where.sentiment = filters.sentiment
+    if (filters.tag) where.tags = { has: filters.tag }
 
     return prisma.feedback.count({ where })
   }
