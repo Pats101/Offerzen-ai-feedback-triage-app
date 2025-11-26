@@ -48,7 +48,9 @@ describe('FeedbackController', () => {
       })
 
       expect(result).toEqual(mockFeedback)
-      expect(mockAnalyzeFeedback).toHaveBeenCalledWith('The app freezes when I click the submit button')
+      expect(mockAnalyzeFeedback).toHaveBeenCalledWith(
+        'The app freezes when I click the submit button'
+      )
       expect(mockRepository.create).toHaveBeenCalledWith({
         text: 'The app freezes when I click the submit button',
         email: 'user@example.com',
@@ -91,6 +93,38 @@ describe('FeedbackController', () => {
     })
   })
 
+  describe('getFeedbackById', () => {
+    it('should return feedback when found', async () => {
+      const mockFeedback = {
+        id: '123',
+        text: 'Test feedback',
+        email: 'user@example.com',
+        summary: 'Test summary',
+        sentiment: 'neutral' as const,
+        priority: 'P2' as const,
+        tags: ['test'],
+        nextAction: 'Review',
+        createdAt: new Date(),
+      }
+
+      mockRepository.findById.mockResolvedValue(mockFeedback)
+
+      const result = await controller.getFeedbackById('123')
+
+      expect(result).toEqual(mockFeedback)
+      expect(mockRepository.findById).toHaveBeenCalledWith('123')
+    })
+
+    it('should return null when not found', async () => {
+      mockRepository.findById.mockResolvedValue(null)
+
+      const result = await controller.getFeedbackById('nonexistent')
+
+      expect(result).toBeNull()
+      expect(mockRepository.findById).toHaveBeenCalledWith('nonexistent')
+    })
+  })
+
   describe('listFeedback', () => {
     it('should list feedback with default pagination', async () => {
       const mockFeedbackList = [
@@ -121,13 +155,13 @@ describe('FeedbackController', () => {
       mockRepository.findMany.mockResolvedValue(mockFeedbackList)
       mockRepository.count.mockResolvedValue(2)
 
-      const result = await controller.listFeedback({ page: 1, limit: 10 })
+      const result = await controller.listFeedback({ page: 1, pageSize: 10 })
 
       expect(result).toEqual({
         data: mockFeedbackList,
         pagination: {
           page: 1,
-          limit: 10,
+          pageSize: 10,
           total: 2,
           totalPages: 1,
         },
@@ -136,15 +170,15 @@ describe('FeedbackController', () => {
       expect(mockRepository.count).toHaveBeenCalledWith({})
     })
 
-    it('should handle custom page and limit', async () => {
+    it('should handle custom page and pageSize', async () => {
       mockRepository.findMany.mockResolvedValue([])
       mockRepository.count.mockResolvedValue(25)
 
-      const result = await controller.listFeedback({ page: 2, limit: 5 })
+      const result = await controller.listFeedback({ page: 2, pageSize: 5 })
 
       expect(result.pagination).toEqual({
         page: 2,
-        limit: 5,
+        pageSize: 5,
         total: 25,
         totalPages: 5,
       })
@@ -169,7 +203,11 @@ describe('FeedbackController', () => {
       mockRepository.findMany.mockResolvedValue(mockFeedbackList)
       mockRepository.count.mockResolvedValue(1)
 
-      const result = await controller.listFeedback({ page: 1, limit: 10, priority: 'P0' })
+      const result = await controller.listFeedback({
+        page: 1,
+        pageSize: 10,
+        priority: 'P0',
+      })
 
       expect(result.data).toEqual(mockFeedbackList)
       expect(mockRepository.findMany).toHaveBeenCalledWith({ priority: 'P0' }, 0, 10)
@@ -194,27 +232,67 @@ describe('FeedbackController', () => {
       mockRepository.findMany.mockResolvedValue(mockFeedbackList)
       mockRepository.count.mockResolvedValue(1)
 
-      const result = await controller.listFeedback({ page: 1, limit: 10, sentiment: 'positive' })
+      const result = await controller.listFeedback({
+        page: 1,
+        pageSize: 10,
+        sentiment: 'positive',
+      })
 
       expect(result.data).toEqual(mockFeedbackList)
       expect(mockRepository.findMany).toHaveBeenCalledWith({ sentiment: 'positive' }, 0, 10)
       expect(mockRepository.count).toHaveBeenCalledWith({ sentiment: 'positive' })
     })
 
-    it('should filter by both priority and sentiment', async () => {
+    it('should filter by tag', async () => {
+      const mockFeedbackList = [
+        {
+          id: '3',
+          text: 'Login button not working',
+          email: 'user@example.com',
+          summary: 'Login issue reported',
+          sentiment: 'negative' as const,
+          priority: 'P1' as const,
+          tags: ['bug', 'login', 'authentication'],
+          nextAction: 'Fix login flow',
+          createdAt: new Date(),
+        },
+      ]
+
+      mockRepository.findMany.mockResolvedValue(mockFeedbackList)
+      mockRepository.count.mockResolvedValue(1)
+
+      const result = await controller.listFeedback({
+        page: 1,
+        pageSize: 10,
+        tag: 'login',
+      })
+
+      expect(result.data).toEqual(mockFeedbackList)
+      expect(mockRepository.findMany).toHaveBeenCalledWith({ tag: 'login' }, 0, 10)
+      expect(mockRepository.count).toHaveBeenCalledWith({ tag: 'login' })
+    })
+
+    it('should filter by multiple criteria', async () => {
       mockRepository.findMany.mockResolvedValue([])
       mockRepository.count.mockResolvedValue(0)
 
-      await controller.listFeedback({ page: 1, limit: 10, priority: 'P1', sentiment: 'negative' })
+      await controller.listFeedback({
+        page: 1,
+        pageSize: 10,
+        priority: 'P1',
+        sentiment: 'negative',
+        tag: 'bug',
+      })
 
       expect(mockRepository.findMany).toHaveBeenCalledWith(
-        { priority: 'P1', sentiment: 'negative' },
+        { priority: 'P1', sentiment: 'negative', tag: 'bug' },
         0,
         10
       )
       expect(mockRepository.count).toHaveBeenCalledWith({
         priority: 'P1',
         sentiment: 'negative',
+        tag: 'bug',
       })
     })
 
@@ -222,11 +300,11 @@ describe('FeedbackController', () => {
       mockRepository.findMany.mockResolvedValue([])
       mockRepository.count.mockResolvedValue(47)
 
-      const result = await controller.listFeedback({ page: 3, limit: 10 })
+      const result = await controller.listFeedback({ page: 3, pageSize: 10 })
 
       expect(result.pagination).toEqual({
         page: 3,
-        limit: 10,
+        pageSize: 10,
         total: 47,
         totalPages: 5, // Math.ceil(47 / 10) = 5
       })
@@ -236,13 +314,13 @@ describe('FeedbackController', () => {
       mockRepository.findMany.mockResolvedValue([])
       mockRepository.count.mockResolvedValue(0)
 
-      const result = await controller.listFeedback({ page: 1, limit: 10 })
+      const result = await controller.listFeedback({ page: 1, pageSize: 10 })
 
       expect(result).toEqual({
         data: [],
         pagination: {
           page: 1,
-          limit: 10,
+          pageSize: 10,
           total: 0,
           totalPages: 0,
         },
