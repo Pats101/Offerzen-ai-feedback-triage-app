@@ -26,4 +26,23 @@ export interface AIAnalysisResult {
   nextAction: string
 }
 
+// Query parameters for listing feedback
+export interface ListFeedbackQuery {
+  page?: number
+  limit?: number
+  priority?: 'P0' | 'P1' | 'P2' | 'P3'
+  sentiment?: 'positive' | 'neutral' | 'negative'
+}
+
+// Paginated response for listing feedback
+export interface PaginatedFeedbackResponse {
+  data: Feedback[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
 // TODO: add validation schemas using Zod

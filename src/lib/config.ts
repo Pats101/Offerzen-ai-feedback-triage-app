@@ -4,7 +4,7 @@ export const config = {
   },
   openai: {
     apiKey: process.env.OPENAI_API_KEY || '',
-    model: 'gpt-4',
+    model: 'gpt-4o-mini',
     maxRetries: 3,
     retryDelay: 1000,
   },
