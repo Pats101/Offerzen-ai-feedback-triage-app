@@ -1,77 +1,59 @@
-import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { analyzeFeedback } from '@/services/ai'
-import {
-  CreateFeedbackInput,
-  Feedback,
-  ListFeedbackQuery,
-  PaginatedFeedbackResponse,
-} from '@/models/feedback'
+import { feedbackRepository } from '@/repositories/feedbackRepository'
+import { toFeedbackResponse, toPaginatedResponse } from '@/mappers/feedbackMapper'
+import { Feedback, PaginatedFeedbackResponse } from '@/models/feedback'
+import { CreateFeedbackInput, ListFeedbackQuery } from '@/validators/feedbackValidator'
 
-// Basic feedback controller - starting with create and read operations
+/**
+ * Feedback Controller
+ * Orchestrates business logic flow without direct database or AI implementation details
+ */
 export class FeedbackController {
-
+  /**
+   * Create new feedback with AI analysis
+   */
   async createFeedback(input: CreateFeedbackInput): Promise<Feedback> {
-    // TODO: add input validation before calling AI service
+    // Get AI analysis
     const analysis = await analyzeFeedback(input.text)
 
-    // Store in database with AI-generated metadata
-    const feedback = await prisma.feedback.create({
-      data: {
-        text: input.text,
-        email: input.email || null,
-        summary: analysis.summary,
-        sentiment: analysis.sentiment,
-        priority: analysis.priority,
-        tags: analysis.tags,
-        nextAction: analysis.nextAction,
-      },
+    // Store in database
+    const feedbackData = await feedbackRepository.create({
+      text: input.text,
+      email: input.email || null,
+      analysis,
     })
 
-    logger.info('Feedback created', { id: feedback.id })
-    return feedback
+    logger.info('Feedback created', { id: feedbackData.id })
+
+    // Map to response format
+    return toFeedbackResponse(feedbackData)
   }
 
+  /**
+   * List feedback with filters and pagination
+   */
+  async listFeedback(query: ListFeedbackQuery): Promise<PaginatedFeedbackResponse> {
+    const { page, limit, priority, sentiment } = query
 
-  async listFeedback(query: ListFeedbackQuery = {}): Promise<PaginatedFeedbackResponse> {
-    const { page = 1, limit = 10, priority, sentiment } = query
-
-    // Build filter conditions
-    const where: any = {}
-    if (priority) where.priority = priority
-    if (sentiment) where.sentiment = sentiment
-
-    // Calculate pagination
+    // Calculate pagination offset
     const skip = (page - 1) * limit
+
+    // Build filters
+    const filters = { priority, sentiment }
 
     // Execute queries in parallel
     const [data, total] = await Promise.all([
-      prisma.feedback.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.feedback.count({ where }),
+      feedbackRepository.findMany(filters, skip, limit),
+      feedbackRepository.count(filters),
     ])
 
     logger.info('Feedback list fetched', { page, limit, total })
 
-    return {
-      data,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    }
+    // Map to response format
+    return toPaginatedResponse(data, page, limit, total)
   }
-
-  // TODO: implement updateFeedback for status changes
-  // async updateFeedback(id: string, input: UpdateFeedbackInput)
-
-  // TODO: implement deleteFeedback (soft delete?)
 }
 
+// Export singleton instance
 export const feedbackController = new FeedbackController()
