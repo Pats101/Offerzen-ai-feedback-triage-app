@@ -8,16 +8,18 @@ export class FeedbackController {
 
   async createFeedback(input: CreateFeedbackInput): Promise<Feedback> {
     // TODO: add input validation before calling AI service
-    const analysis = await analyzeFeedback(input.content)
+    const analysis = await analyzeFeedback(input.text)
 
     // Store in database with AI-generated metadata
     const feedback = await prisma.feedback.create({
       data: {
-        content: input.content,
-        category: analysis.category,
+        text: input.text,
+        email: input.email || null,
+        summary: analysis.summary,
+        sentiment: analysis.sentiment,
         priority: analysis.priority,
         tags: analysis.tags,
-        status: 'new',
+        nextAction: analysis.nextAction,
       },
     })
 

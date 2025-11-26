@@ -15,15 +15,15 @@ export default async function handler(
 }
 
 async function handleCreate(req: NextApiRequest, res: NextApiResponse) {
-  const { content } = req.body
+  const { text, email } = req.body
 
   // Basic validation
-  if (!content || typeof content !== 'string') {
-    return res.status(400).json({ error: 'Content is required and must be a string' })
+  if (!text || typeof text !== 'string') {
+    return res.status(400).json({ error: 'Text is required and must be a string' })
   }
 
   try {
-    const feedback = await feedbackController.createFeedback({ content })
+    const feedback = await feedbackController.createFeedback({ text, email })
     return res.status(201).json(feedback)
   } catch (error) {
     console.error('Error creating feedback:', error)

@@ -11,15 +11,19 @@ const openai = new OpenAI({
 const ANALYSIS_PROMPT = `
 You are an AI assistant that analyzes customer feedback.
 Given a piece of feedback, extract:
-1. Category (bug, feature, improvement, question, other)
-2. Priority (low, medium, high, critical)
+1. Summary (brief one-line summary of the feedback)
+2. Sentiment (positive, neutral, or negative)
 3. Relevant tags (array of keywords)
+4. Priority (P0 for critical/urgent, P1 for high, P2 for medium, P3 for low)
+5. Next action (suggested next step or action to take)
 
 Respond with ONLY a valid JSON object in this exact format:
 {
-  "category": "bug|feature|improvement|question|other",
-  "priority": "low|medium|high|critical",
-  "tags": ["tag1", "tag2", "tag3"]
+  "summary": "brief summary here",
+  "sentiment": "positive|neutral|negative",
+  "tags": ["tag1", "tag2", "tag3"],
+  "priority": "P0|P1|P2|P3",
+  "nextAction": "suggested action"
 }
 
 Do not include any explanations or additional text outside the JSON.
@@ -58,9 +62,11 @@ export async function analyzeFeedback(content: string): Promise<AIAnalysisResult
 
     // Fallback to defaults if AI fails
     return {
-      category: 'other',
-      priority: 'medium',
+      summary: 'Unable to generate summary',
+      sentiment: 'neutral',
       tags: [],
+      priority: 'P2',
+      nextAction: 'Review manually',
     }
   }
 }
