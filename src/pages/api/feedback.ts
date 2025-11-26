@@ -1,54 +1,78 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { feedbackController } from '@/controllers/feedbackController'
-import { ListFeedbackQuery } from '@/models/feedback'
+import {
+  createFeedbackSchema,
+  listFeedbackQuerySchema,
+} from '@/validators/feedbackValidator'
+import { ZodError } from 'zod'
 
-// API routes for feedback operations
+/**
+ * API Route Handler for /api/feedback
+ * Thin routing layer - only handles HTTP concerns
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'POST') {
-    return handleCreate(req, res)
-  }
-
-  if (req.method === 'GET') {
-    return handleList(req, res)
-  }
-
-  res.status(405).json({ error: 'Method not allowed' })
-}
-
-async function handleCreate(req: NextApiRequest, res: NextApiResponse) {
-  const { text, email } = req.body
-
-  // Basic validation
-  if (!text || typeof text !== 'string') {
-    return res.status(400).json({ error: 'Text is required and must be a string' })
-  }
-
   try {
-    const feedback = await feedbackController.createFeedback({ text, email })
-    return res.status(201).json(feedback)
-  } catch (error) {
-    console.error('Error creating feedback:', error)
-    return res.status(500).json({ error: 'Failed to create feedback' })
-  }
-}
-
-async function handleList(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    // Parse query parameters
-    const query: ListFeedbackQuery = {
-      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
-      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
-      priority: req.query.priority as any,
-      sentiment: req.query.sentiment as any,
+    if (req.method === 'POST') {
+      return await handleCreate(req, res)
     }
 
+    if (req.method === 'GET') {
+      return await handleList(req, res)
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' })
+  } catch (error) {
+    // Handle unexpected errors
+    console.error('Unexpected error in feedback API:', error)
+    return res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+/**
+ * POST /api/feedback - Create new feedback
+ */
+async function handleCreate(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    // Validate input
+    const input = createFeedbackSchema.parse(req.body)
+
+    // Delegate to controller
+    const feedback = await feedbackController.createFeedback(input)
+
+    return res.status(201).json(feedback)
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        error: 'Validation error',
+        details: error.errors,
+      })
+    }
+    throw error
+  }
+}
+
+/**
+ * GET /api/feedback - List feedback with filters and pagination
+ */
+async function handleList(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    // Validate and parse query parameters
+    const query = listFeedbackQuerySchema.parse(req.query)
+
+    // Delegate to controller
     const result = await feedbackController.listFeedback(query)
+
     return res.status(200).json(result)
   } catch (error) {
-    console.error('Error listing feedback:', error)
-    return res.status(500).json({ error: 'Failed to fetch feedback' })
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        error: 'Invalid query parameters',
+        details: error.errors,
+      })
+    }
+    throw error
   }
 }

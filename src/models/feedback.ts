@@ -1,5 +1,8 @@
-// Type definitions for feedback system
+// Type definitions for feedback system domain models
 
+/**
+ * Core feedback entity
+ */
 export interface Feedback {
   id: string
   text: string
@@ -12,12 +15,9 @@ export interface Feedback {
   nextAction: string
 }
 
-export interface CreateFeedbackInput {
-  text: string
-  email?: string
-}
-
-// Result from AI analysis
+/**
+ * Result from AI analysis service
+ */
 export interface AIAnalysisResult {
   summary: string
   sentiment: 'positive' | 'neutral' | 'negative'
@@ -26,15 +26,9 @@ export interface AIAnalysisResult {
   nextAction: string
 }
 
-// Query parameters for listing feedback
-export interface ListFeedbackQuery {
-  page?: number
-  limit?: number
-  priority?: 'P0' | 'P1' | 'P2' | 'P3'
-  sentiment?: 'positive' | 'neutral' | 'negative'
-}
-
-// Paginated response for listing feedback
+/**
+ * Paginated response for listing feedback
+ */
 export interface PaginatedFeedbackResponse {
   data: Feedback[]
   pagination: {
@@ -44,5 +38,3 @@ export interface PaginatedFeedbackResponse {
     totalPages: number
   }
 }
-
-// TODO: add validation schemas using Zod
