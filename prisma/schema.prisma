@@ -9,14 +9,18 @@ datasource db {
 
 model Feedback {
   id          String   @id @default(cuid())
-  content     String
-  category    String?
-  priority    String?
-  tags        String[]
-  status      String   @default("new")
+  text        String
+  email       String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  @@index([status])
+  // Analysis object fields
+  summary     String
+  sentiment   String   // positive|neutral|negative
+  tags        String[]
+  priority    String   // P0|P1|P2|P3
+  nextAction  String
+
+  @@index([priority])
+  @@index([sentiment])
   // TODO: add more indexes based on query patterns
 }

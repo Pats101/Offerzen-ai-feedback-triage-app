@@ -2,25 +2,28 @@
 
 export interface Feedback {
   id: string
-  content: string
-  category: string | null
-  priority: string | null
-  tags: string[]
-  status: string
+  text: string
+  email: string | null
   createdAt: Date
-  updatedAt: Date
+  summary: string
+  sentiment: 'positive' | 'neutral' | 'negative'
+  tags: string[]
+  priority: 'P0' | 'P1' | 'P2' | 'P3'
+  nextAction: string
 }
 
 export interface CreateFeedbackInput {
-  content: string
+  text: string
+  email?: string
 }
 
 // Result from AI analysis
 export interface AIAnalysisResult {
-  category: string
-  priority: string
+  summary: string
+  sentiment: 'positive' | 'neutral' | 'negative'
   tags: string[]
+  priority: 'P0' | 'P1' | 'P2' | 'P3'
+  nextAction: string
 }
 
 // TODO: add validation schemas using Zod
-// TODO: consider adding user/author field to feedback model

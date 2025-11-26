@@ -3,7 +3,8 @@ import type { NextPage } from 'next'
 
 // Basic feedback submission form
 const SubmitFeedback: NextPage = () => {
-  const [content, setContent] = useState('')
+  const [text, setText] = useState('')
+  const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -14,12 +15,13 @@ const SubmitFeedback: NextPage = () => {
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ text, email: email || undefined }),
       })
 
       if (response.ok) {
         alert('Feedback submitted!')
-        setContent('')
+        setText('')
+        setEmail('')
       } else {
         alert('Failed to submit feedback')
       }
@@ -43,12 +45,26 @@ const SubmitFeedback: NextPage = () => {
             </label>
             <textarea
               id="feedback"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               rows={6}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               placeholder="Describe your issue, suggestion, or question..."
               required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              Email (optional)
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="your@email.com"
             />
           </div>
 
