@@ -13,6 +13,7 @@ export const listFeedbackQuerySchema = z.object({
   priority: z.enum(['P0', 'P1', 'P2', 'P3']).optional(),
   sentiment: z.enum(['positive', 'neutral', 'negative']).optional(),
   tag: z.string().min(1).optional(),
+  search: z.string().min(1).max(200).optional(),
 })
 
 // Schema for getting feedback by ID

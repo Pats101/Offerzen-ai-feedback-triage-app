@@ -326,5 +326,58 @@ describe('FeedbackController', () => {
         },
       })
     })
+
+    it('should search feedback by text content', async () => {
+      const mockFeedbackList = [
+        {
+          id: '4',
+          text: 'The app crashes when I click submit',
+          email: 'user@example.com',
+          summary: 'App crash on submit button',
+          sentiment: 'negative' as const,
+          priority: 'P1' as const,
+          tags: ['crash', 'bug'],
+          nextAction: 'Fix submit handler',
+          createdAt: new Date(),
+        },
+      ]
+
+      mockRepository.findMany.mockResolvedValue(mockFeedbackList)
+      mockRepository.count.mockResolvedValue(1)
+
+      const result = await controller.listFeedback({
+        page: 1,
+        pageSize: 10,
+        search: 'crash',
+      })
+
+      expect(result.data).toEqual(mockFeedbackList)
+      expect(mockRepository.findMany).toHaveBeenCalledWith({ search: 'crash' }, 0, 10)
+      expect(mockRepository.count).toHaveBeenCalledWith({ search: 'crash' })
+    })
+
+    it('should combine search with other filters', async () => {
+      mockRepository.findMany.mockResolvedValue([])
+      mockRepository.count.mockResolvedValue(0)
+
+      await controller.listFeedback({
+        page: 1,
+        pageSize: 10,
+        priority: 'P1',
+        sentiment: 'negative',
+        search: 'login',
+      })
+
+      expect(mockRepository.findMany).toHaveBeenCalledWith(
+        { priority: 'P1', sentiment: 'negative', search: 'login' },
+        0,
+        10
+      )
+      expect(mockRepository.count).toHaveBeenCalledWith({
+        priority: 'P1',
+        sentiment: 'negative',
+        search: 'login',
+      })
+    })
   })
 })

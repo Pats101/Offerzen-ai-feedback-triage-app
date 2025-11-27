@@ -50,13 +50,13 @@ export class FeedbackController {
    * List feedback with filters and pagination
    */
   async listFeedback(query: ListFeedbackQuery): Promise<PaginatedFeedbackResponse> {
-    const { page, pageSize, priority, sentiment, tag } = query
+    const { page, pageSize, priority, sentiment, tag, search } = query
 
     // Calculate pagination offset
     const skip = (page - 1) * pageSize
 
     // Build filters
-    const filters = { priority, sentiment, tag }
+    const filters = { priority, sentiment, tag, search }
 
     // Execute queries in parallel
     const [data, total] = await Promise.all([
@@ -64,7 +64,7 @@ export class FeedbackController {
       feedbackRepository.count(filters),
     ])
 
-    logger.info('Feedback list fetched', { page, pageSize, total })
+    logger.info('Feedback list fetched', { page, pageSize, total, hasSearch: !!search })
 
     // Map to response format
     return toPaginatedResponse(data, page, pageSize, total)

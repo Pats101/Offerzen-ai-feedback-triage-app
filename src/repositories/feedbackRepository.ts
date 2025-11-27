@@ -18,6 +18,7 @@ export interface FeedbackFilters {
   priority?: 'P0' | 'P1' | 'P2' | 'P3'
   sentiment?: 'positive' | 'neutral' | 'negative'
   tag?: string
+  search?: string
 }
 
 /**
@@ -64,6 +65,14 @@ export class FeedbackRepository {
     if (filters.sentiment) where.sentiment = filters.sentiment
     if (filters.tag) where.tags = { has: filters.tag }
 
+    // Add case-insensitive search across text and summary fields
+    if (filters.search) {
+      where.OR = [
+        { text: { contains: filters.search, mode: 'insensitive' } },
+        { summary: { contains: filters.search, mode: 'insensitive' } },
+      ]
+    }
+
     return prisma.feedback.findMany({
       where,
       skip,
@@ -80,6 +89,14 @@ export class FeedbackRepository {
     if (filters.priority) where.priority = filters.priority
     if (filters.sentiment) where.sentiment = filters.sentiment
     if (filters.tag) where.tags = { has: filters.tag }
+
+    // Add case-insensitive search across text and summary fields
+    if (filters.search) {
+      where.OR = [
+        { text: { contains: filters.search, mode: 'insensitive' } },
+        { summary: { contains: filters.search, mode: 'insensitive' } },
+      ]
+    }
 
     return prisma.feedback.count({ where })
   }
