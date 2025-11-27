@@ -2,6 +2,8 @@ import OpenAI from 'openai'
 import { config } from '@/lib/config'
 import { retryWithBackoff } from './retry'
 import { AIAnalysisResult } from '@/models/feedback'
+import { logger } from '@/lib/logger'
+import { randomUUID } from 'crypto'
 
 const openai = new OpenAI({
   apiKey: config.openai.apiKey,
@@ -30,6 +32,17 @@ Do not include any explanations or additional text outside the JSON.
 `
 
 export async function analyzeFeedback(content: string): Promise<AIAnalysisResult> {
+  const requestId = randomUUID()
+  const startTime = Date.now()
+  const timestamp = new Date().toISOString()
+
+  logger.info('AI analysis started', {
+    requestId,
+    model: config.openai.model,
+    contentLength: content.length,
+    timestamp,
+  })
+
   try {
     const result = await retryWithBackoff(
       async () => {
@@ -56,9 +69,29 @@ export async function analyzeFeedback(content: string): Promise<AIAnalysisResult
       }
     )
 
+    const duration = Date.now() - startTime
+    logger.info('AI analysis completed', {
+      requestId,
+      model: config.openai.model,
+      duration: `${duration}ms`,
+      timestamp: new Date().toISOString(),
+      success: true,
+      sentiment: result.sentiment,
+      priority: result.priority,
+      tagsCount: result.tags.length,
+    })
+
     return result
   } catch (error) {
-    console.error('AI analysis failed, using defaults:', error)
+    const duration = Date.now() - startTime
+    logger.error('AI analysis failed, using fallback', {
+      requestId,
+      model: config.openai.model,
+      duration: `${duration}ms`,
+      timestamp: new Date().toISOString(),
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    })
 
     // Fallback to defaults if AI fails
     return {
