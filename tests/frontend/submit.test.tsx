@@ -2,9 +2,15 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import SubmitFeedback from '@/pages/submit'
+import { ToastProvider } from '@/contexts/ToastContext'
 
 // Mock fetch
 global.fetch = jest.fn()
+
+// Helper function to render with ToastProvider
+const renderWithToast = (component: React.ReactElement) => {
+  return render(<ToastProvider>{component}</ToastProvider>)
+}
 
 describe('SubmitFeedback Page', () => {
   beforeEach(() => {
@@ -12,7 +18,7 @@ describe('SubmitFeedback Page', () => {
   })
 
   it('should render the submit feedback form', () => {
-    render(<SubmitFeedback />)
+    renderWithToast(<SubmitFeedback />)
 
     // Use getByRole to get the heading specifically
     expect(screen.getByRole('heading', { name: 'Submit Feedback' })).toBeInTheDocument()
@@ -22,7 +28,7 @@ describe('SubmitFeedback Page', () => {
   })
 
   it('should enable submit button when textarea has content', () => {
-    render(<SubmitFeedback />)
+    renderWithToast(<SubmitFeedback />)
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
@@ -51,7 +57,7 @@ describe('SubmitFeedback Page', () => {
       json: async () => mockResponse,
     })
 
-    render(<SubmitFeedback />)
+    renderWithToast(<SubmitFeedback />)
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
@@ -59,8 +65,9 @@ describe('SubmitFeedback Page', () => {
     fireEvent.change(textarea, { target: { value: 'This is my feedback' } })
     fireEvent.click(submitButton)
 
+    // Toast should show success message (not alert)
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith('Feedback submitted!')
+      expect(screen.getByText('Feedback submitted successfully!')).toBeInTheDocument()
     })
 
     expect(global.fetch).toHaveBeenCalledWith('/api/feedback', {
@@ -93,7 +100,7 @@ describe('SubmitFeedback Page', () => {
       json: async () => mockResponse,
     })
 
-    render(<SubmitFeedback />)
+    renderWithToast(<SubmitFeedback />)
 
     const textarea = screen.getByLabelText('Your Feedback')
     const emailInput = screen.getByLabelText('Email (optional)')
@@ -103,8 +110,9 @@ describe('SubmitFeedback Page', () => {
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.click(submitButton)
 
+    // Toast should show success message
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith('Feedback submitted!')
+      expect(screen.getByText('Feedback submitted successfully!')).toBeInTheDocument()
     })
 
     expect(global.fetch).toHaveBeenCalledWith('/api/feedback', {
@@ -119,7 +127,7 @@ describe('SubmitFeedback Page', () => {
       ok: false,
     })
 
-    render(<SubmitFeedback />)
+    renderWithToast(<SubmitFeedback />)
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
@@ -127,8 +135,9 @@ describe('SubmitFeedback Page', () => {
     fireEvent.change(textarea, { target: { value: 'This is my feedback' } })
     fireEvent.click(submitButton)
 
+    // Toast should show error message
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith('Failed to submit feedback')
+      expect(screen.getByText('Failed to submit feedback. Please try again.')).toBeInTheDocument()
     })
   })
 
@@ -137,7 +146,7 @@ describe('SubmitFeedback Page', () => {
       () => new Promise(resolve => setTimeout(() => resolve({ ok: true, json: async () => ({}) }), 100))
     )
 
-    render(<SubmitFeedback />)
+    renderWithToast(<SubmitFeedback />)
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })

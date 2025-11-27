@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Tag } from './Tag'
 import { PriorityBadge } from './PriorityBadge'
+import { getApiUrl } from '@/lib/api-config'
 
 interface Feedback {
   id: string
@@ -36,7 +37,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
     setError(null)
 
     try {
-      const response = await fetch(`/api/feedback/${feedbackId}`)
+      const response = await fetch(getApiUrl(`/api/feedback/${feedbackId}`))
 
       if (!response.ok) {
         if (response.status === 404) {

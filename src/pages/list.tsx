@@ -5,6 +5,7 @@ import { PriorityBadge } from '@/components/PriorityBadge'
 import { SentimentBadge } from '@/components/SentimentBadge'
 import { FeedbackDrawer } from '@/components/FeedbackDrawer'
 import { NavButton } from '@/components/NavButton'
+import { getApiUrl } from '@/lib/api-config'
 
 interface Feedback {
   id: string
@@ -56,7 +57,7 @@ const FeedbackList: NextPage = () => {
       if (filters.sentiment) params.append('sentiment', filters.sentiment)
       if (filters.tag) params.append('tag', filters.tag)
 
-      const response = await fetch(`/api/feedback?${params.toString()}`)
+      const response = await fetch(getApiUrl(`/api/feedback?${params.toString()}`))
 
       if (!response.ok) {
         throw new Error('Failed to fetch feedback')
