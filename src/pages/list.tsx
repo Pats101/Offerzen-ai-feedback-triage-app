@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { Tag } from '@/components/Tag'
 import { PriorityBadge } from '@/components/PriorityBadge'
+import { FeedbackDrawer } from '@/components/FeedbackDrawer'
 
 interface Feedback {
   id: string
@@ -36,6 +37,8 @@ const FeedbackList: NextPage = () => {
     sentiment: '',
     tag: '',
   })
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   const fetchFeedback = async () => {
     setLoading(true)
@@ -90,6 +93,16 @@ const FeedbackList: NextPage = () => {
       hour: '2-digit',
       minute: '2-digit',
     })
+  }
+
+  const handleViewDetails = (feedbackId: string) => {
+    setSelectedFeedbackId(feedbackId)
+    setIsDrawerOpen(true)
+  }
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false)
+    setSelectedFeedbackId(null)
   }
 
   return (
@@ -183,7 +196,8 @@ const FeedbackList: NextPage = () => {
             {feedbackList.map((feedback) => (
               <div
                 key={feedback.id}
-                className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow"
+                className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleViewDetails(feedback.id)}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -250,6 +264,15 @@ const FeedbackList: NextPage = () => {
           </div>
         )}
       </div>
+
+      {/* Feedback Detail Drawer */}
+      {selectedFeedbackId && (
+        <FeedbackDrawer
+          feedbackId={selectedFeedbackId}
+          isOpen={isDrawerOpen}
+          onClose={handleCloseDrawer}
+        />
+      )}
     </div>
   )
 }
