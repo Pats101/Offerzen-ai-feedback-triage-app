@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { NavButton } from '@/components/NavButton'
+import { useToast } from '@/contexts/ToastContext'
 
 // Basic feedback submission form
 const SubmitFeedback: NextPage = () => {
   const [text, setText] = useState('')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
+  const { showToast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,15 +22,15 @@ const SubmitFeedback: NextPage = () => {
       })
 
       if (response.ok) {
-        alert('Feedback submitted!')
+        showToast('Feedback submitted successfully!', 'success')
         setText('')
         setEmail('')
       } else {
-        alert('Failed to submit feedback')
+        showToast('Failed to submit feedback. Please try again.', 'error')
       }
     } catch (error) {
       console.error('Error:', error)
-      alert('Failed to submit feedback')
+      showToast('An error occurred. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
