@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: feedback-triage-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: feedback_triage
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application (Development Mode with Hot Reload)
+  app:
+    image: node:18-slim
+    container_name: feedback-triage-app-dev
+    working_dir: /app
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/feedback_triage
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - WATCHPACK_POLLING=true
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      # Use named volume for node_modules (better performance)
+      - node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        apt-get update && apt-get install -y openssl &&
+        npm install &&
+        npx prisma generate &&
+        npx prisma migrate deploy &&
+        npm run dev
+      "
+
+volumes:
+  postgres_data:
+    driver: local
+  node_modules:
+    driver: local

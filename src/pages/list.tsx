@@ -109,16 +109,28 @@ const FeedbackList: NextPage = () => {
               <h1 className="text-3xl font-bold text-gray-900">Feedback Triage</h1>
               <p className="text-sm text-gray-600 mt-1">Review and prioritize customer feedback</p>
             </div>
-            <NavButton
-              href="/submit"
-              icon={
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              }
-            >
-              Submit Feedback
-            </NavButton>
+            <div className="flex items-center gap-3">
+              <NavButton
+                href="/"
+                icon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                }
+              >
+                Home
+              </NavButton>
+              <NavButton
+                href="/submit"
+                icon={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                }
+              >
+                Submit Feedback
+              </NavButton>
+            </div>
           </div>
         </div>
 
