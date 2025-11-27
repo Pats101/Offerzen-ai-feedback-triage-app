@@ -4,6 +4,7 @@ import { Tag } from '@/components/Tag'
 import { PriorityBadge } from '@/components/PriorityBadge'
 import { SentimentBadge } from '@/components/SentimentBadge'
 import { FeedbackDrawer } from '@/components/FeedbackDrawer'
+import { NavButton } from '@/components/NavButton'
 
 interface Feedback {
   id: string
@@ -103,8 +104,22 @@ const FeedbackList: NextPage = () => {
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Feedback Triage</h1>
-          <p className="text-sm text-gray-600 mt-1">Review and prioritize customer feedback</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Feedback Triage</h1>
+              <p className="text-sm text-gray-600 mt-1">Review and prioritize customer feedback</p>
+            </div>
+            <NavButton
+              href="/submit"
+              icon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              }
+            >
+              Submit Feedback
+            </NavButton>
+          </div>
         </div>
 
         {/* Filters */}
