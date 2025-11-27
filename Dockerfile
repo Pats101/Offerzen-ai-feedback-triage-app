@@ -16,6 +16,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Create public directory if it doesn't exist
+RUN mkdir -p public
+
 # Generate Prisma Client
 RUN npx prisma generate
 
@@ -26,7 +29,9 @@ RUN npm run build
 FROM node:18-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME="0.0.0.0"
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -44,9 +49,6 @@ USER nextjs
 
 # Expose the port
 EXPOSE 3001
-
-ENV PORT 3001
-ENV HOSTNAME "0.0.0.0"
 
 # Start the application
 CMD ["node", "server.js"]
