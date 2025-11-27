@@ -92,12 +92,12 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
         onClick={onClose}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white shadow-2xl z-50 overflow-y-auto transform transition-transform">
+      <div className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white rounded-l-xl shadow-xl z-50 overflow-y-auto transform transition-transform">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Feedback Details</h2>
@@ -156,7 +156,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
                 <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
                   Summary
                 </h3>
-                <p className="text-xl font-semibold text-gray-900">{feedback.summary}</p>
+                <p className="text-2xl font-semibold text-gray-900">{feedback.summary}</p>
               </div>
 
               {/* Full Feedback Text */}
@@ -224,13 +224,19 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Metadata</h3>
                 <dl className="grid grid-cols-1 gap-4">
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Feedback ID</dt>
-                    <dd className="mt-1 text-sm text-gray-900 font-mono">{feedback.id}</dd>
+                    <dt className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                      <span className="text-lg">🆔</span>
+                      Feedback ID
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 font-mono ml-7">{feedback.id}</dd>
                   </div>
                   {feedback.email && (
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">Contact Email</dt>
-                      <dd className="mt-1 text-sm text-gray-900">
+                      <dt className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                        <span className="text-lg">📧</span>
+                        Contact Email
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900 ml-7">
                         <a
                           href={`mailto:${feedback.email}`}
                           className="text-blue-600 hover:text-blue-800 hover:underline"
@@ -241,8 +247,11 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
                     </div>
                   )}
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Submitted</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{formatDate(feedback.createdAt)}</dd>
+                    <dt className="text-sm font-medium text-gray-500 flex items-center gap-2">
+                      <span className="text-lg">📅</span>
+                      Submitted
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 ml-7">{formatDate(feedback.createdAt)}</dd>
                   </div>
                 </dl>
               </div>

@@ -4,22 +4,57 @@ interface PriorityBadgeProps {
   priority: string
 }
 
-// Simple badge component for displaying priority levels
+// Modern SaaS-style priority badge with specified colors
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
-  const priorityStyles: Record<string, string> = {
-    low: 'bg-gray-200 text-gray-700',
-    medium: 'bg-yellow-200 text-yellow-800',
-    high: 'bg-orange-200 text-orange-800',
-    critical: 'bg-red-200 text-red-800',
+  const getPriorityStyle = (priority: string) => {
+    const upperPriority = priority.toUpperCase()
+
+    switch (upperPriority) {
+      case 'P0':
+        return {
+          bg: 'bg-red-100',
+          text: 'text-red-700',
+          border: 'border-red-200',
+          label: 'P0'
+        }
+      case 'P1':
+        return {
+          bg: 'bg-red-100',
+          text: 'text-red-700',
+          border: 'border-red-200',
+          label: 'P1'
+        }
+      case 'P2':
+        return {
+          bg: 'bg-orange-100',
+          text: 'text-orange-700',
+          border: 'border-orange-200',
+          label: 'P2'
+        }
+      case 'P3':
+        return {
+          bg: 'bg-gray-100',
+          text: 'text-gray-700',
+          border: 'border-gray-200',
+          label: 'P3'
+        }
+      default:
+        return {
+          bg: 'bg-gray-100',
+          text: 'text-gray-700',
+          border: 'border-gray-200',
+          label: priority
+        }
+    }
   }
 
-  const colorClass = priorityStyles[priority.toLowerCase()] || priorityStyles.medium
+  const style = getPriorityStyle(priority)
 
   return (
-    <span className={`inline-block px-3 py-1 rounded text-xs font-semibold uppercase ${colorClass}`}>
-      {priority}
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
+    >
+      {style.label}
     </span>
   )
 }
-
-// TODO: consider using color from design system once we have one
