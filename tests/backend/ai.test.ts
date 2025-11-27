@@ -1,23 +1,62 @@
+// Mock crypto for consistent UUIDs in tests
+jest.mock('crypto', () => ({
+  ...jest.requireActual('crypto'),
+  randomUUID: jest.fn(() => 'test-request-id-123'),
+}))
+
+// Mock the logger to avoid console output in tests
+jest.mock('@/lib/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
+}))
+
+// Mock config with faster retries for testing
+jest.mock('@/lib/config', () => ({
+  config: {
+    database: {
+      url: '',
+    },
+    openai: {
+      apiKey: 'test-key',
+      model: 'gpt-4o-mini',
+      maxRetries: 2,
+      retryDelay: 10, // Fast retries for testing
+    },
+    app: {
+      nodeEnv: 'test',
+      logLevel: 'error',
+    },
+  },
+}))
+
+// Create a mock for the OpenAI chat completions create method
+const mockCreate = jest.fn()
+
+// Mock the OpenAI module before importing
+jest.mock('openai', () => {
+  return jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: mockCreate,
+      },
+    },
+  }))
+})
+
+// Import after mocking
 import { analyzeFeedback } from '@/services/ai'
-import OpenAI from 'openai'
-
-// Mock the OpenAI module
-jest.mock('openai')
-
-const MockedOpenAI = OpenAI as jest.MockedClass<typeof OpenAI>
 
 describe('AI Service', () => {
-  let mockCreate: jest.Mock
-
   beforeEach(() => {
-    mockCreate = jest.fn()
-    MockedOpenAI.mockImplementation(() => ({
-      chat: {
-        completions: {
-          create: mockCreate,
-        },
-      },
-    } as any))
+    jest.clearAllMocks()
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   describe('analyzeFeedback', () => {
