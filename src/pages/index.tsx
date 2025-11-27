@@ -23,76 +23,21 @@ const Home: NextPage = () => {
         </div>
 
         {/* Thank You Message */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              </div>
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200 text-center">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
             </div>
-            <div className="flex-1">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                Thank You for This Opportunity
-              </h2>
-              <p className="text-gray-700 leading-relaxed">
-                I sincerely appreciate the opportunity to interview for this position. This application demonstrates my full-stack engineering skills, including Next.js, TypeScript, AI integration, database design, and modern UI/UX principles. I'm excited to discuss how I can contribute to your team.
-              </p>
-            </div>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              Thank You for This Opportunity
+            </h2>
+            <p className="text-gray-700 leading-relaxed max-w-2xl mx-auto">
+              I sincerely appreciate the opportunity to interview for this position. This AI-powered feedback management system demonstrates my full-stack capabilities.
+            </p>
           </div>
         </div>
-
-        {/* Features Grid */}
-        {/* <div className="grid md:grid-cols-2 gap-6 mb-12">
-          <div className="bg-white rounded-lg p-6 border border-gray-200 hover:border-indigo-300 transition-colors">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">AI-Powered Analysis</h3>
-            <p className="text-sm text-gray-600">
-              Automatic sentiment analysis, priority assignment, and tag generation using OpenAI
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 border border-gray-200 hover:border-indigo-300 transition-colors">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Smart Filtering</h3>
-            <p className="text-sm text-gray-600">
-              Filter by priority, sentiment, and tags with server-side pagination
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 border border-gray-200 hover:border-indigo-300 transition-colors">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Clean Architecture</h3>
-            <p className="text-sm text-gray-600">
-              Repository pattern, validators, mappers, and comprehensive error handling
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 border border-gray-200 hover:border-indigo-300 transition-colors">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Fully Tested</h3>
-            <p className="text-sm text-gray-600">
-              Comprehensive test coverage with Jest and React Testing Library
-            </p>
-          </div>
-        </div> */}
 
         {/* Call to Action */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg p-8 text-center">
