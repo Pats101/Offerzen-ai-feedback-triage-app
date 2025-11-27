@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { NavButton } from '@/components/NavButton'
 import { useToast } from '@/contexts/ToastContext'
+import { getApiUrl } from '@/lib/api-config'
 
 // Basic feedback submission form
 const SubmitFeedback: NextPage = () => {
@@ -15,7 +16,7 @@ const SubmitFeedback: NextPage = () => {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/feedback', {
+      const response = await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, email: email || undefined }),
