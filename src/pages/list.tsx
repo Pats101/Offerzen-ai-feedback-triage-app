@@ -39,6 +39,7 @@ const FeedbackList: NextPage = () => {
     priority: '',
     sentiment: '',
     tag: '',
+    search: '',
   })
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -56,6 +57,7 @@ const FeedbackList: NextPage = () => {
       if (filters.priority) params.append('priority', filters.priority)
       if (filters.sentiment) params.append('sentiment', filters.sentiment)
       if (filters.tag) params.append('tag', filters.tag)
+      if (filters.search) params.append('search', filters.search)
 
       const response = await fetch(getApiUrl(`/api/feedback?${params.toString()}`))
 
@@ -132,6 +134,39 @@ const FeedbackList: NextPage = () => {
                 Submit Feedback
               </NavButton>
             </div>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              value={filters.search}
+              onChange={(e) => {
+                setFilters({ ...filters, search: e.target.value })
+                setPage(1)
+              }}
+              placeholder="Search feedback text or summary..."
+              className="flex-1 px-3 py-2 text-sm border-0 focus:ring-0 focus:outline-none"
+            />
+            {filters.search && (
+              <button
+                onClick={() => {
+                  setFilters({ ...filters, search: '' })
+                  setPage(1)
+                }}
+                className="ml-2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Clear search"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
