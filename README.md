@@ -2,9 +2,25 @@
 
 > **📋 Assessment Project**: AI-powered feedback analysis and prioritization system
 
-An intelligent feedback triage application that uses OpenAI GPT-4 to automatically analyze, categorize, and prioritize user feedback. Built as an assessment project demonstrating full-stack TypeScript development, clean architecture, and production-ready practices.
+An intelligent feedback triage application that uses OpenAI gpt-4o-mini to automatically analyze, categorize, and prioritize user feedback. Built as an assessment project demonstrating full-stack TypeScript development, clean architecture, and production-ready practices.
 
 ---
+
+## Architecture Overview
+
+The application follows a **clean layered architecture**:
+
+```
+UI (Next.js Pages)
+  ↓
+API Routes (HTTP handling, validation)
+  ↓
+Controllers (Business logic)
+  ↓
+Services (AI integration) + Repositories (Database)
+  ↓
+PostgreSQL (Data persistence)
+```
 
 ## 👋 For Recruiters: Quick Start Guide
 
@@ -47,7 +63,7 @@ docker-compose up --build
 |-------|----------------|
 | **Full-Stack TypeScript** | End-to-end type safety from database to UI |
 | **Clean Architecture** | Repository pattern, controllers, mappers, services |
-| **AI Integration** | OpenAI GPT-4 with retry logic and error handling |
+| **AI Integration** | OpenAI gpt-4o-mini with retry logic and error handling |
 | **Database Design** | PostgreSQL with Prisma ORM, migrations, indexes |
 | **Testing** | Jest + React Testing Library, 100% coverage (25 tests) |
 | **DevOps** | Docker, Docker Compose, GitHub Actions CI/CD |
@@ -82,7 +98,7 @@ Offerzen-ai-feedback-triage-app/
 ### 🔍 Key Features to Review
 
 1. **AI Analysis** ([src/services/ai.ts](src/services/ai.ts))
-   - OpenAI GPT-4 integration with structured output
+   - OpenAI gpt-4o-mini integration with structured output
    - Retry logic with exponential backoff
    - Graceful error handling and fallbacks
 
@@ -134,7 +150,7 @@ Offerzen-ai-feedback-triage-app/
 - **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes, TypeScript
 - **Database**: PostgreSQL 15 with Prisma ORM
-- **AI**: OpenAI GPT-4
+- **AI**: OpenAI gpt-4o-mini
 - **Testing**: Jest, React Testing Library
 - **DevOps**: Docker, Docker Compose, GitHub Actions
 
@@ -238,6 +254,28 @@ For issues or questions:
 
 This project is built as an assessment project for OfferZen.
 
+🎥 Video Walkthrough
+A short explanation of the system architecture, design decisions, and workflow.
+
 ---
+
+## 📸 Please view screenshots for this project
+
+### Welcome Page
+![Welcome page](./src/img/welcome-page.png "Landing page of the project")
+
+
+### Submit Feedback
+![Welcome page](./src/img/submit-feedback-page.png "Submit feedback")
+
+
+### List Feedback Page
+![Welcome page](./src/img/list-feedback-page.png "View feddback list")
+
+
+
+### View Feedback Drawer
+![Welcome page](./src/img/view-feedback-drawer-page.png "View feedback for more info")
+
 
 **Built with ❤️ by Patrick Ganhiwa** | [GitHub](https://github.com/Pats101) 
