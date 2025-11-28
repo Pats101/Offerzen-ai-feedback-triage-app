@@ -46,12 +46,17 @@ jobs:
         run: |
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/feedback_triage_test" > .env
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          cat .env
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: |
+          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/feedback_triage_test"
+          npx prisma generate
 
       - name: Run database migrations
-        run: npx prisma migrate deploy
+        run: |
+          export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/feedback_triage_test"
+          npx prisma migrate deploy
 
       - name: Run linter
         run: npm run lint
