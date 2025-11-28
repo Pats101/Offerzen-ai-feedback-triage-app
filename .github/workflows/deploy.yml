@@ -1,8 +1,9 @@
 name: Deploy
 
 on:
-  push:
-    branches: [main]
+  # Disabled - only run manually when ready to deploy
+  # push:
+  #   branches: [main]
   workflow_dispatch:
 
 jobs:
