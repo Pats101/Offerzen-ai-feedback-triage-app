@@ -34,7 +34,8 @@ yarn-error.log*
 next-env.d.ts
 
 # Prisma
-/prisma/migrations/
+# Note: migrations/ should be committed for CI/CD
+# /prisma/migrations/
 
 # IDE
 .vscode/
