@@ -40,6 +40,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/feedback_triage_test
         run: npx prisma generate
 
       - name: Run database migrations
@@ -79,6 +81,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/feedback_triage_test
         run: npx prisma generate
 
       - name: Run TypeScript type check
