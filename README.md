@@ -257,7 +257,25 @@ This project is built as an assessment project for OfferZen.
 🎥 Video Walkthrough
 A short explanation of the system architecture, design decisions, and workflow.
 
-
 ---
+
+## 📸 Please view screenshots for this project
+
+### Welcome Page
+![Welcome page](./src/img/welcome-page.png "Landing page of the project")
+
+
+### Submit Feedback
+![Welcome page](./src/img/submit-feedback-page.png "Submit feedback")
+
+
+### List Feedback Page
+![Welcome page](./src/img/list-feedback-page.png "View feddback list")
+
+
+
+### View Feedback Drawer
+![Welcome page](./src/img/view-feedback-drawer-page.png "View feedback for more info")
+
 
 **Built with ❤️ by Patrick Ganhiwa** | [GitHub](https://github.com/Pats101) 
