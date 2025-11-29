@@ -17,8 +17,13 @@ describe('SubmitFeedback Page', () => {
     jest.clearAllMocks()
   })
 
-  it('should render the submit feedback form', () => {
+  it('should render the submit feedback form', async () => {
     renderWithToast(<SubmitFeedback />)
+
+    // Wait for loading state to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading form...')).not.toBeInTheDocument()
+    }, { timeout: 2000 })
 
     // Use getByRole to get the heading specifically
     expect(screen.getByRole('heading', { name: 'Submit Feedback' })).toBeInTheDocument()
@@ -27,8 +32,13 @@ describe('SubmitFeedback Page', () => {
     expect(screen.getByRole('button', { name: /submit feedback/i })).toBeInTheDocument()
   })
 
-  it('should enable submit button when textarea has content', () => {
+  it('should enable submit button when textarea has content', async () => {
     renderWithToast(<SubmitFeedback />)
+
+    // Wait for loading state to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading form...')).not.toBeInTheDocument()
+    }, { timeout: 2000 })
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
@@ -58,6 +68,11 @@ describe('SubmitFeedback Page', () => {
     })
 
     renderWithToast(<SubmitFeedback />)
+
+    // Wait for loading state to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading form...')).not.toBeInTheDocument()
+    }, { timeout: 2000 })
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
@@ -102,6 +117,11 @@ describe('SubmitFeedback Page', () => {
 
     renderWithToast(<SubmitFeedback />)
 
+    // Wait for loading state to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading form...')).not.toBeInTheDocument()
+    }, { timeout: 2000 })
+
     const textarea = screen.getByLabelText('Your Feedback')
     const emailInput = screen.getByLabelText('Email (optional)')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
@@ -129,6 +149,11 @@ describe('SubmitFeedback Page', () => {
 
     renderWithToast(<SubmitFeedback />)
 
+    // Wait for loading state to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading form...')).not.toBeInTheDocument()
+    }, { timeout: 2000 })
+
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
 
@@ -147,6 +172,11 @@ describe('SubmitFeedback Page', () => {
     )
 
     renderWithToast(<SubmitFeedback />)
+
+    // Wait for initial page loading state to complete
+    await waitFor(() => {
+      expect(screen.queryByText('Loading form...')).not.toBeInTheDocument()
+    }, { timeout: 2000 })
 
     const textarea = screen.getByLabelText('Your Feedback')
     const submitButton = screen.getByRole('button', { name: /submit feedback/i })
