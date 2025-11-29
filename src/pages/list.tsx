@@ -5,6 +5,7 @@ import { PriorityBadge } from '@/components/PriorityBadge'
 import { SentimentBadge } from '@/components/SentimentBadge'
 import { FeedbackDrawer } from '@/components/FeedbackDrawer'
 import { NavButton } from '@/components/NavButton'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { getApiUrl } from '@/lib/api-config'
 
 interface Feedback {
@@ -35,6 +36,7 @@ const FeedbackList: NextPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
   const [filters, setFilters] = useState({
     priority: '',
     sentiment: '',
@@ -47,6 +49,8 @@ const FeedbackList: NextPage = () => {
   const fetchFeedback = async () => {
     setLoading(true)
     setError(null)
+
+    const startTime = Date.now()
 
     try {
       const params = new URLSearchParams({
@@ -68,10 +72,17 @@ const FeedbackList: NextPage = () => {
       const data: PaginatedResponse = await response.json()
       setFeedbackList(data.data)
       setTotalPages(data.pagination.totalPages)
+      setTotalItems(data.pagination.total)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
-      setLoading(false)
+      // Ensure loading state is visible for at least 1 second
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = Math.max(0, 1000 - elapsedTime)
+
+      setTimeout(() => {
+        setLoading(false)
+      }, remainingTime)
     }
   }
 
@@ -103,14 +114,21 @@ const FeedbackList: NextPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+      <div className="max-w-5xl mx-auto px-4 py-8 w-full flex-shrink-0">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Feedback Triage</h1>
-              <p className="text-sm text-gray-600 mt-1">Review and prioritize customer feedback</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Review and prioritize customer feedback
+                {!loading && totalItems > 0 && (
+                  <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                    {totalItems} {totalItems === 1 ? 'item' : 'items'}
+                  </span>
+                )}
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <NavButton
@@ -235,19 +253,16 @@ const FeedbackList: NextPage = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4" />
-              <p className="text-sm text-gray-600">Loading feedback...</p>
-            </div>
-          </div>
-        )}
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto px-4 pb-8 w-full">
+          {/* Loading State */}
+          {loading && <LoadingSpinner text="Loading feedback..." />}
 
-        {/* Error State */}
-        {error && (
+          {/* Error State */}
+          {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <div className="flex items-center">
               <svg className="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -363,6 +378,7 @@ const FeedbackList: NextPage = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* Feedback Detail Drawer */}

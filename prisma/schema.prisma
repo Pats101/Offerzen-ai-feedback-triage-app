@@ -22,5 +22,4 @@ model Feedback {
 
   @@index([priority])
   @@index([sentiment])
-  // TODO: add more indexes based on query patterns
 }

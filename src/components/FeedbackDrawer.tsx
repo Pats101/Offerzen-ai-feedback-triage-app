@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Tag } from './Tag'
 import { PriorityBadge } from './PriorityBadge'
+import { LoadingSpinner } from './LoadingSpinner'
 import { getApiUrl } from '@/lib/api-config'
 
 interface Feedback {
@@ -36,6 +37,8 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
     setLoading(true)
     setError(null)
 
+    const startTime = Date.now()
+
     try {
       const response = await fetch(getApiUrl(`/api/feedback/${feedbackId}`))
 
@@ -51,7 +54,13 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
-      setLoading(false)
+      // Ensure loading state is visible for at least 1 second
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = Math.max(0, 1000 - elapsedTime)
+
+      setTimeout(() => {
+        setLoading(false)
+      }, remainingTime)
     }
   }
 
@@ -123,14 +132,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ feedbackId, isOp
 
         {/* Content */}
         <div className="p-6">
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4" />
-                <p className="text-gray-600">Loading feedback details...</p>
-              </div>
-            </div>
-          )}
+          {loading && <LoadingSpinner text="Loading feedback details..." color="border-blue-600" />}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
