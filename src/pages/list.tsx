@@ -190,9 +190,9 @@ const FeedbackList: NextPage = () => {
 
         {/* Filters */}
         <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex flex-col md:flex-row md:items-end gap-4">
             {/* Priority Filter */}
-            <div>
+            <div className="flex-1">
               <label htmlFor="priority-filter" className="block text-xs font-medium text-gray-700 mb-1.5">
                 Priority
               </label>
@@ -214,7 +214,7 @@ const FeedbackList: NextPage = () => {
             </div>
 
             {/* Sentiment Filter */}
-            <div>
+            <div className="flex-1">
               <label htmlFor="sentiment-filter" className="block text-xs font-medium text-gray-700 mb-1.5">
                 Sentiment
               </label>
@@ -235,7 +235,7 @@ const FeedbackList: NextPage = () => {
             </div>
 
             {/* Tag Filter */}
-            <div>
+            <div className="flex-1">
               <label htmlFor="tag-filter" className="block text-xs font-medium text-gray-700 mb-1.5">
                 Tags
               </label>
@@ -251,6 +251,21 @@ const FeedbackList: NextPage = () => {
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
               />
             </div>
+
+            {/* Clear Filters Button */}
+            {(filters.priority || filters.sentiment || filters.tag) && (
+              <div className="flex-shrink-0">
+                <button
+                  onClick={() => {
+                    setFilters({ ...filters, priority: '', sentiment: '', tag: '' })
+                    setPage(1)
+                  }}
+                  className="w-full md:w-auto px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-md hover:bg-indigo-100 hover:border-indigo-300 transition-colors"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
