@@ -257,6 +257,8 @@ This project is built as an assessment project for OfferZen.
 🎥 Video Walkthrough
 A short explanation of the system architecture, design decisions, and workflow.
 
+[![Video Walkthrough]](https://www.loom.com/share/3dd3bb2ec436475492531b26b8a0da32)
+
 ---
 
 ## 📸 Please view screenshots for this project
